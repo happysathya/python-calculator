@@ -1,0 +1,144 @@
+Code smells
+  - Smells are certain structures in the code that indicate violation of fundamental design principles and negatively impact design quality.
+  - Subjective, and varies by language, developer, and development methodology.
+  - Not bugs, but increase the risk of bugs or failures in the future.
+
+Unit testing
+  - The goal is to isolate each part of the program and show that the individual parts are correct.
+  - It provides a strict, written contract that the piece of code must satisfy mostly using validations.
+  - Safety net to refactor code with confidence.
+  - Tests are your documentation which talks about the importance in maintainability of software.
+
+Test smells
+  - Unit tests are also affected by bad programming practices.
+  - This affects the quality of production code and maintenance of a system.
+  - This is of great interest and importance to study and detect them during development cycles.
+
+Statically typed languages
+  - It is very popular among development of backend systems.
+  - Main reason being compile time safety leading to less bugs and easier maintenance. In addition to tests.
+  - Expressing business domains using types and building business logic around them. Domain driven design.
+  - Majority of test smells research has been focused on statically typed languages.
+  
+Python
+  - Dynamically typed language.
+  - Hugely popular and adapted in data science and machine learning projects.
+  - This paper is mostly focused on studying test smells in Python projects.
+
+Goal of the paper
+  - Identifying test smells from well established open source python projects.
+  - Providing a tool for their detection using offline and during development stages.
+  - Also an empirical study of their pervasiveness by applying the PyNose tool on matured python projects.
+
+Systematic mapping study of test smells
+  - Search for keyword "test smell" or "test smells" in digital libraries like ACM, IEEE and Scopus.
+  - Filter publications about software engineering methodologies, test smell detection and refactoring
+  - Limit to period between 2006 and 2020
+  - There could be potential articles left out due to the above criteria.
+    - Single iteration of backward snowballing is conducted on left out papers
+  - Reliability of selected publications was manually evaluated by team.
+
+Identifying test smells
+  - Try to implement above test smells in Python.
+  - Focus only on Unittest testing framework that is included into the Python Standard Library.
+  - The reason being popular and inspired from JUnit.
+  - Some of them are only valid for statically typed languages like Java or Scala.
+  - Some of them are context specific based on the production code it is being tested.
+  - After the above process 17 smells were shortlisted.
+
+Assertion Roulette
+  - A test case contains more than one assertion statement without an explanation/message.
+
+Conditional Test Logic
+  - A test case contains one or more control statements (i.e., if, for, while).
+
+Constructor Initialization
+  - A test suite contains a constructor declaration (an __init__ method).
+
+Default Test
+  - A test suite is called MyTestCase which is a default name provided by IDE.
+
+Duplicate Assert
+  - A test case contains more than one assertion statement with the same parameters. 
+
+Empty Test
+  - A test case where everything is commented out.
+
+Exception Handling
+  - A test case contains either the try/except statement or the raise statement. 
+
+General Fixture
+  - Not all fields instantiated within the setUp() method of a test suite are utilized by all test cases in this test suite.
+
+Ignored Test
+  - A test case contains the @unittest.skip decorator.
+
+Lack of Cohesion of Test Cases
+  - Test cases are grouped together in one test suite but are not cohesive. The key to creating maintainable code is adhering to “low coupling, high cohesion". Related code should be close to each other to make it highly cohesive.
+
+Magic Number Test
+  - A test case contains an assertion statement that contains a numeric literal as an argument. 
+
+Obscure In-Line Setup
+  - A test case contains ten or more local variables declarations. 
+
+Redundant Assertion
+  - A test case contains an assertion statement in which the expected and actual parameters of equality are the same.
+
+Redundant Print
+  - A test case invokes the print() function.
+
+Sleepy Test
+  - A test case invokes the time.sleep() function with no comment. 
+
+Suboptimal Assert
+  - A test case contains at least one of the suboptimal asserts.
+
+Test Maverick
+  - A test suite contains at least one test case that does not use a single field from the SetUp() method.
+
+Unknown Test
+  - A test case does not contain a single assertion statement.
+
+Identifying Python specific test smells
+  - Selected a primary dataset of mature open source projects with atleast 1000 commits, 10 contributors
+  - Find all test files having "test" in its name. which is the unittest naming convention.
+  - Find patterns in the histories of the collected projects where changes made to test files that might be considered as fixing the test or fixing the smell.
+  - Tool develoed to mine change patterns in commit history is named PythonchangeMiner. 
+
+PythonchangeMiner
+  - It builds a program dependence graph with representing the code by showing its data dependencies and control dependencies.
+  - It builds a change graph for the fragment of code changes using the versions of code before and after the target change.
+  - It mines such change graphs from git repositories by traversing their commit history, and discover patterns in these change graphs.
+  - The pattern is defined by two thresholds: minimum number of graph nodes in the pattern, and minimum number of repetitions of the pattern in the corpus.
+
+Suboptimal asserts
+  - After identifying common patterns more than 3 different projects, majority of patterns related to assertion functionality changes which are related to test smells.
+  - The result is categorized into 3 groups.
+    1. Assertion changes that alter the logic. Ex. Changing from assertEqual to assertRegex.
+    2. Assertion changes that do not alter the logic and use more appropriate functions. Ex. assertTrue(X in Y) to assertIn(X, Y) or assertEqual(X, False) is changed to assertFalse(X)
+    3. Assertion changes that do not alter the logic and use less appropriate functions. Ex. Moving from a more specific assertIsNotNone(X) to a more general assertNotEqual(X, None) which leads to test smell.
+
+PyNose
+  - PYNOSE is implemented as a plugin for PyCharm.
+  - To tool identifies 18 test smells in actual Python code. It parses .py files to PSIFile objects and 
+  - Suppports GUI mode in active development or CLI mode for offline analysis.
+  - It can report the results as JSON files for futher evaluation.
+
+Evaluation of PyNose results
+  - Manually selected 8 projects that did not make it to primary dataset and marked as validation set.
+  - Then the 8 projects are run against PyNose and results are compared against the manual set.
+  - The precision, recall and F1 value match very closely.
+  - The results are compared with TSDetect (similiar tool for Java) and the F1 score is very similiar.
+
+Empirical study on test smell prevalence
+  - Apart from Primary dataset, secondary dataset of projects (less commits) was selected for identifying test smells.
+  - The purpose of the Secondary dataset is to make sure that the reported results are unbiased.
+  - Test smells distribution are similiar when compared between primary datatset and secondary dataset. 
+  - This proves that various test smells are prevalent in Python code.
+  - For better analysis, co-occurence of test smells are identified in a test suite. The distribution percentage demonstrates that test smells have relationship with one another.
+
+Future work
+  - Supporting more test smells
+  - Conducting a more thorough comparison of PYNOSE to other tools, for example, to TSDETECT that works with Java.
+  - It would be of great interest to see how test smells correlate with test coverage.

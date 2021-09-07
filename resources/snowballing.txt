@@ -1,0 +1,20 @@
+snowballing
+
+find the one relevant article
+
+backward snowballing
+  - find all citations that paper used to build their case
+
+forward snowballing
+  - find all papers where that paper was cited
+
+
+precision
+  - (true positives / selected elements)
+
+recall
+  - (true positives / relevant elements)
+
+F1 score
+  - the harmonic mean of the precision and recall. 
+  - 2 * ((precision * recall) / (precision + recall))
